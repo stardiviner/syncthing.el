@@ -36,6 +36,32 @@
 (require 'syncthing-api)
 
 
+(defun syncthing--connection-extract-info (connection)
+  "Extract CONNECTION into for Elisp."
+  (let ((connection-id (car connection))
+        (address (alist-get 'address connection))
+        (at (alist-get 'at connection))
+        (client-version (alist-get 'clientVersion connection))
+        (connected (alist-get 'connected connection))
+        (crypto (alist-get 'crypto connection))
+        (in-bytes-total (alist-get 'inBytesTotal connection))
+        (out-bytes-total (alist-get 'outBytesTotal connection))
+        (paused (alist-get 'paused connection))
+        (type (alist-get 'type connection)))
+    ;; TODO
+    connection-id))
+
+(defun syncthing-connection-list ()
+  "List of Syncthing connections."
+  ;; total
+  (syncthing--connection-extract-info
+   (assoc 'total (syncthing-api-GET-/rest/system/connections)))
+  
+  (mapcar
+   (lambda (connection)
+     (syncthing--connection-extract-info connection))
+   (alist-get 'connections (syncthing-api-GET-/rest/system/connections))))
+
 
 
 (provide 'syncthing)
