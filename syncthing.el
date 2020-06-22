@@ -68,9 +68,58 @@
 
 
 (defvar syncthing--http-rest-endpoints-alist
-  '(("GET" . "/rest/system/browse")
+  '(;; System Endpoints
+    ("GET" . "/rest/system/browse")
     ("GET" . "/rest/system/config")
-    ("GET" . "/rest/system/config/isync")))
+    ("GET" . "/rest/system/config/isync")
+    ("POST" . "/rest/system/config")
+    ("GET" . "/rest/system/connections")
+    ("GET" . "/rest/system/debug")
+    ("POST" . "/rest/system/debug")
+    ("GET" . "/rest/system/discovery")
+    ("POST" . "/rest/system/discovery")
+    ("POST" . "/rest/system/error/clear")
+    ("GET" . "/rest/system/error")
+    ("POST" . "/rest/system/error")
+    ("GET" . "/rest/system/log")
+    ("POST" . "/rest/system/pause")
+    ("GET" . "/rest/system/ping")
+    ("POST" . "/rest/system/ping")
+    ("POST" . "/rest/system/reset")
+    ("POST" . "/rest/system/restart")
+    ("POST" . "/rest/system/resume")
+    ("POST" . "/rest/system/shutdown")
+    ("GET" . "/rest/system/status")
+    ("GET" . "/rest/system/upgrade")
+    ("POST" . "/rest/system/upgrade")
+    ("GET" . "/rest/system/version")
+    
+    ;; Database Endpoints
+    ("GET" . "/rest/db/browse")
+    ("GET" . "/rest/db/completion")
+    ("GET" . "/rest/db/file")
+    ("GET" . "/rest/db/ignores")
+    ("POST" . "/rest/db/ignores")
+    ("GET" . "/rest/db/need")
+    ("POST" . "/rest/db/override")
+    ("POST" . "/rest/db/prio")
+    ("POST" . "/rest/db/revert")
+    ("POST" . "/rest/db/scan")
+    ("GET" . "/rest/db/status")
+    
+    ;; Event Endpoints
+    ("GET" . "/rest/events")
+
+    ;; Statistics Endpoints
+    ("GET" . "/rest/stats/device")
+    ("GET" . "/rest/stats/folder")
+
+    ;; Misc Services Endpoints
+    ("GET" . "/rest/svc/deviceid")
+    ("GET" . "/rest/svc/lang")
+    ("GET" . "/rest/svc/random/string")
+    ("GET" . "/rest/svc/report"))
+  "Alist of Syncthing HTTP RESTful API endpoints")
 
 (defvar syncthing--http-rest-endpoint nil
   "A temporary variable used in mapcar loop.")
