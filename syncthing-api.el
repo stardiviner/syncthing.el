@@ -1,10 +1,9 @@
 ;;; syncthing-api.el --- The API for Syncthing -*- lexical-binding: t; -*-
 
-;;; Time-stamp: <2020-06-22 09:00:46 stardiviner>
+;;; Time-stamp: <2020-06-22 10:50:48 stardiviner>
 
 ;;; Commentary:
-
-
+;;; https://docs.syncthing.net/dev/rest.html
 
 ;;; Code:
 
@@ -28,19 +27,22 @@
 
 
 (defmacro syncthing--rest-api (method endpoint &optional body &rest arglist)
-  "The Syncthing REST API macro to construct HTTP METHOD, ENDPOINT with BODY and ARGLIST.
-The generated functions like `syncthing-api-GET-/rest/system/browse'"
-  `(defun ,(intern (format "syncthing-api-%s-%s" (eval method) (eval endpoint))) ,arglist
-     (let ((url-request-method ,method)
-           (url-request-extra-headers '(("X-API-Key" . ,syncthing-api-key))))
-       (with-current-buffer
-           (url-retrieve-synchronously
-            (format "%s:%s%s" syncthing-server syncthing-port ,endpoint))
-         (goto-char (point-min))
-         (re-search-forward "^$")
-         (let ((result (json-read)))
-           result))
-       ,@body)))
+  "The core macro to construct HTTP RESTful API.
+Construct functions with METHOD, ENDPOINT, BODY and ARGLIST.
+The generated functions like syncthing-api-GET-/rest/system/browse."
+  (let ((method (eval method))
+        (endpoint (eval endpoint)))
+    `(defun ,(intern (format "syncthing-api-%s-%s" method endpoint)) ,arglist
+       (let ((url-request-method ,method)
+             (url-request-extra-headers '(("X-API-Key" . ,syncthing-api-key))))
+         (with-current-buffer
+             (url-retrieve-synchronously
+              (format "%s:%s%s" syncthing-server syncthing-port ,endpoint))
+           (goto-char (point-min))
+           (re-search-forward "^$")
+           (let ((result (json-read)))
+             result))
+         ,@body))))
 
 (defvar syncthing--http-rest-endpoints-alist
   '(;; System Endpoints
@@ -94,21 +96,23 @@ The generated functions like `syncthing-api-GET-/rest/system/browse'"
     ("GET" . "/rest/svc/lang")
     ("GET" . "/rest/svc/random/string")
     ("GET" . "/rest/svc/report"))
-  "Alist of Syncthing HTTP RESTful API endpoints")
+  "Alist of Syncthing HTTP RESTful API endpoints.")
 
 (defvar syncthing--http-rest-endpoint nil
   "A temporary variable used in mapcar loop.")
 
 (defun syncthing--http-rest-endpoints-initialize ()
-  "Initialize HTTP RESTful endpoints API functions like `syncthing-api-GET-/rest/system/browse'."
-  (mapcar
-   (lambda (pair)
-     (setq syncthing--http-rest-endpoint pair)
-     ;; (syncthing--rest-api "GET" "/rest/system/config")
-     (syncthing--rest-api (car syncthing--http-rest-endpoint) (cdr syncthing--http-rest-endpoint)))
-   syncthing--http-rest-endpoints-alist))
+  "Initialize HTTP RESTful endpoints API functions.
+The generated functions like syncthing-api-GET-/rest/system/browse."
+  ;; FIXME only `syncthing-api-GET-/rest/svc/report'
+  )
 
-(syncthing--http-rest-endpoints-initialize)
+;;;###autoload
+(mapcar
+ (lambda (pair)
+   (setq syncthing--http-rest-endpoint pair)
+   (syncthing--rest-api (car syncthing--http-rest-endpoint) (cdr syncthing--http-rest-endpoint)))
+ syncthing--http-rest-endpoints-alist)
 
 
 
