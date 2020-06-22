@@ -52,9 +52,8 @@
   :group 'syncthing)
 
 
-(defmacro syncthing--rest-api (method endpoint &rest arglist)
-  "The Syncthing REST API macro to construct HTTP METHOD, ENDPOINT with ARGLIST."
-  `(defun ,(intern (format "syncthing-api-%s-%s" method endpoint)) ,arglist
+(defmacro syncthing--rest-api (method endpoint &optional body &rest arglist)
+  "The Syncthing REST API macro to construct HTTP METHOD, ENDPOINT with BODY and ARGLIST."
   `(defun ,(intern (format "syncthing-api-%s-%s" (eval method) (eval endpoint))) ,arglist
      (let ((url-request-method ,method)
            (url-request-extra-headers '(("X-API-Key" . ,syncthing-api-key))))
@@ -64,7 +63,9 @@
          (goto-char (point-min))
          (re-search-forward "^$")
          (let ((result (json-read)))
-           result)))))
+           result))
+       ,@body)))
+
 
 (defvar syncthing--http-rest-endpoints-alist
   '(("GET" . "/rest/system/browse")
