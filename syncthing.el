@@ -1,6 +1,6 @@
 ;;; syncthing.el --- Syncthing client for Emacs -*- lexical-binding: t; -*-
 
-;;; Time-stamp: <2020-06-22 08:37:46 stardiviner>
+;;; Time-stamp: <2020-06-22 08:54:42 stardiviner>
 
 ;; Authors: stardiviner <numbchild@gmail.com>
 ;; Package-Requires: ((emacs "25.1"))
@@ -53,7 +53,8 @@
 
 
 (defmacro syncthing--rest-api (method endpoint &optional body &rest arglist)
-  "The Syncthing REST API macro to construct HTTP METHOD, ENDPOINT with BODY and ARGLIST."
+  "The Syncthing REST API macro to construct HTTP METHOD, ENDPOINT with BODY and ARGLIST.
+The generated functions like `syncthing-api-GET-/rest/system/browse'"
   `(defun ,(intern (format "syncthing-api-%s-%s" (eval method) (eval endpoint))) ,arglist
      (let ((url-request-method ,method)
            (url-request-extra-headers '(("X-API-Key" . ,syncthing-api-key))))
@@ -125,7 +126,7 @@
   "A temporary variable used in mapcar loop.")
 
 (defun syncthing--http-rest-endpoints-initialize ()
-  "Initialize HTTP RESTful endpoints API functions."
+  "Initialize HTTP RESTful endpoints API functions like `syncthing-api-GET-/rest/system/browse'."
   (mapcar
    (lambda (pair)
      (setq syncthing--http-rest-endpoint pair)
