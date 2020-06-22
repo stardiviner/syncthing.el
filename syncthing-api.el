@@ -1,6 +1,6 @@
 ;;; syncthing-api.el --- The API for Syncthing -*- lexical-binding: t; -*-
 
-;;; Time-stamp: <2020-06-22 10:50:48 stardiviner>
+;;; Time-stamp: <2020-06-23 13:19:24 stardiviner>
 
 ;;; Commentary:
 ;;; https://docs.syncthing.net/dev/rest.html
@@ -26,18 +26,24 @@
   :group 'syncthing)
 
 
-(defmacro syncthing--rest-api (method endpoint &optional body &rest arglist)
+(defmacro syncthing--rest-api (method endpoint &optional body)
   "The core macro to construct HTTP RESTful API.
 Construct functions with METHOD, ENDPOINT, BODY and ARGLIST.
 The generated functions like syncthing-api-GET-/rest/system/browse."
   (let ((method (eval method))
         (endpoint (eval endpoint)))
-    `(defun ,(intern (format "syncthing-api-%s-%s" method endpoint)) ,arglist
+    `(defun ,(intern (format "syncthing-api-%s-%s" method endpoint)) (&optional url-params-alist data)
        (let ((url-request-method ,method)
-             (url-request-extra-headers '(("X-API-Key" . ,syncthing-api-key))))
-         (with-current-buffer
-             (url-retrieve-synchronously
-              (format "%s:%s%s" syncthing-server syncthing-port ,endpoint))
+             (url-request-extra-headers '(("X-API-Key" . ,syncthing-api-key)))
+             (url (concat
+                   (format "%s:%s%s?" syncthing-server syncthing-port ,endpoint)
+                   (if url-params-alist
+                       (mapconcat
+                        (lambda (endpoint-spec)
+                          (format "%s=%s" (car endpoint-spec) (cdr endpoint-spec)))
+                        url-params-alist
+                        "&")))))
+         (with-current-buffer (url-retrieve-synchronously url)
            (goto-char (point-min))
            (re-search-forward "^$")
            (let ((result (json-read)))
