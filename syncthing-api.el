@@ -110,15 +110,60 @@ The generated functions like syncthing-api-GET-/rest/system/browse."
 (defun syncthing--http-rest-endpoints-initialize ()
   "Initialize HTTP RESTful endpoints API functions.
 The generated functions like syncthing-api-GET-/rest/system/browse."
-  ;; FIXME only `syncthing-api-GET-/rest/svc/report'
-  )
+  ;; System Endpoints
+  (syncthing--rest-api "GET" "/rest/system/browse")
+  (syncthing--rest-api "GET" "/rest/system/config")
+  (syncthing--rest-api "GET" "/rest/system/config/isync")
+  (syncthing--rest-api "POST" "/rest/system/config")
+  (syncthing--rest-api "GET" "/rest/system/connections")
+  (syncthing--rest-api "GET" "/rest/system/debug")
+  (syncthing--rest-api "POST" "/rest/system/debug")
+  (syncthing--rest-api "GET" "/rest/system/discovery")
+  (syncthing--rest-api "POST" "/rest/system/discovery")
+  (syncthing--rest-api "POST" "/rest/system/error/clear")
+  (syncthing--rest-api "GET" "/rest/system/error")
+  (syncthing--rest-api "POST" "/rest/system/error")
+  (syncthing--rest-api "GET" "/rest/system/log")
+  (syncthing--rest-api "POST" "/rest/system/pause")
+  (syncthing--rest-api "GET" "/rest/system/ping")
+  (syncthing--rest-api "POST" "/rest/system/ping")
+  (syncthing--rest-api "POST" "/rest/system/reset")
+  (syncthing--rest-api "POST" "/rest/system/restart")
+  (syncthing--rest-api "POST" "/rest/system/resume")
+  (syncthing--rest-api "POST" "/rest/system/shutdown")
+  (syncthing--rest-api "GET" "/rest/system/status")
+  (syncthing--rest-api "GET" "/rest/system/upgrade")
+  (syncthing--rest-api "POST" "/rest/system/upgrade")
+  (syncthing--rest-api "GET" "/rest/system/version")
+  
+  ;; Database Endpoints
+  (syncthing--rest-api "GET" "/rest/db/browse")
+  (syncthing--rest-api "GET" "/rest/db/completion")
+  (syncthing--rest-api "GET" "/rest/db/file")
+  (syncthing--rest-api "GET" "/rest/db/ignores")
+  (syncthing--rest-api "POST" "/rest/db/ignores")
+  (syncthing--rest-api "GET" "/rest/db/need")
+  (syncthing--rest-api "POST" "/rest/db/override")
+  (syncthing--rest-api "POST" "/rest/db/prio")
+  (syncthing--rest-api "POST" "/rest/db/revert")
+  (syncthing--rest-api "POST" "/rest/db/scan")
+  (syncthing--rest-api "GET" "/rest/db/status")
+  
+  ;; Event Endpoints
+  (syncthing--rest-api "GET" "/rest/events")
+
+  ;; Statistics Endpoints
+  (syncthing--rest-api "GET" "/rest/stats/device")
+  (syncthing--rest-api "GET" "/rest/stats/folder")
+
+  ;; Misc Services Endpoints
+  (syncthing--rest-api "GET" "/rest/svc/deviceid")
+  (syncthing--rest-api "GET" "/rest/svc/lang")
+  (syncthing--rest-api "GET" "/rest/svc/random/string")
+  (syncthing--rest-api "GET" "/rest/svc/report"))
 
 ;;;###autoload
-(mapcar
- (lambda (pair)
-   (setq syncthing--http-rest-endpoint pair)
-   (syncthing--rest-api (car syncthing--http-rest-endpoint) (cdr syncthing--http-rest-endpoint)))
- syncthing--http-rest-endpoints-alist)
+(syncthing--http-rest-endpoints-initialize)
 
 
 
