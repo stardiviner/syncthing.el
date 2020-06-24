@@ -1,6 +1,6 @@
 ;;; syncthing-api.el --- The API for Syncthing -*- lexical-binding: t; -*-
 
-;;; Time-stamp: <2020-06-23 13:19:24 stardiviner>
+;;; Time-stamp: <2020-06-24 20:34:28 stardiviner>
 
 ;;; Commentary:
 ;;; https://docs.syncthing.net/dev/rest.html
@@ -29,10 +29,10 @@
 (defmacro syncthing--rest-api (method endpoint &optional body)
   "The core macro to construct HTTP RESTful API.
 Construct functions with METHOD, ENDPOINT, BODY and ARGLIST.
-The generated functions like syncthing-api-GET-/rest/system/browse."
+The generated functions like syncthing-api-get-/rest/system/browse."
   (let ((method (eval method))
         (endpoint (eval endpoint)))
-    `(defun ,(intern (format "syncthing-api-%s-%s" method endpoint)) (&optional url-params-alist data)
+    `(defun ,(intern (format "syncthing-api-%s-%s" (downcase method) endpoint)) (&optional url-params-alist data)
        (let ((url-request-method ,method)
              (url-request-extra-headers '(("X-API-Key" . ,syncthing-api-key)))
              (url (concat
